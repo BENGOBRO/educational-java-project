@@ -1,8 +1,6 @@
 public class Numbers {
-    private final int TWO_DIVISOR = 2;
-    private final int SEVEN_DIVISOR = 7;
     private final int TEN_DIVISOR = 10;
-    private int num;
+    private final int num;
     boolean natural;
     boolean exit;
     boolean even;
@@ -21,10 +19,12 @@ public class Numbers {
     }
 
     public void checkEvenNum() {
+        int TWO_DIVISOR = 2;
         even = num % TWO_DIVISOR == 0;
     }
 
     public void checkBuzzNum() {
+        int SEVEN_DIVISOR = 7;
         buzz = num % SEVEN_DIVISOR == 0 || (num % TEN_DIVISOR) == 7;
     }
 
@@ -51,8 +51,8 @@ public class Numbers {
         String gapfulNum = Integer.toString(num);
         int length = gapfulNum.length();
         if (length >= 3) {
-            String dividerInString = gapfulNum.substring(0, 1) + gapfulNum.substring(length - 1, length);
-            Long divider = Long.valueOf(dividerInString);
+            String dividerInString = gapfulNum.charAt(0) + gapfulNum.substring(length - 1, length);
+            long divider = Long.parseLong(dividerInString);
             gapful = num % divider == 0;
         } else {
             gapful = false;

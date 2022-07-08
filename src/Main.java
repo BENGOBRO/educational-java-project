@@ -1,3 +1,5 @@
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -11,63 +13,66 @@ public class Main {
         while (!exit) {
             getRequest();
             String[] line = scanner.nextLine().split(" ");
-            int num = Integer.parseInt(line[0]);
+            try {
+                int num = Integer.parseInt(line[0]);
 
-            if (line.length > 1) {
-                int amount = Integer.parseInt(line[1]);
-                machine = new Numbers(amount);
-                machine.checkNaturalNum();
-
-                if (!machine.natural) {
-                    notNaturalSecondNumber();
-                    continue;
-                }
-                for (int i = 0; i < amount; i++) {
-                    String result = (num + i) + " is ";
-                    machine = new Numbers(i + num);
+                if (line.length > 1) {
+                    int amount = Integer.parseInt(line[1]);
+                    machine = new Numbers(amount);
                     machine.checkNaturalNum();
-                    if (machine.natural) {
+                    if (!machine.natural) {
+                        notNaturalSecondNumber();
+                        continue;
+                    }
+                    for (int i = 0; i < amount; i++) {
+                        String result = (num + i) + " is ";
+                        List<String> types = new ArrayList<>();
+                        machine = new Numbers(i + num);
+                        machine.checkNaturalNum();
+                        if (machine.natural) {
+                            checkCharacteristics();
+                            if (machine.buzz) {
+                                types.add("buzz");
+                            }
+                            if (machine.duck) {
+                                types.add("duck");
+                            }
+                            if (machine.palindromic) {
+                                types.add("palindromic");
+                            }
+                            if (machine.gapful) {
+                                types.add("gapful");
+                            }
+                            if (machine.even) {
+                                types.add("even");
+                            } else {
+                                types.add("odd");
+                            }
+                        } else {
+                            notNaturalFirstNumber();
+                            break;
+                        }
+                        result += String.join(", ", types);
+                        System.out.println(result);
+                    }
+                    System.out.println("");
+                } else {
+                    machine = new Numbers(num);
+                    machine.checkNaturalNum();
+
+                    if (machine.natural && !machine.exit) {
                         checkCharacteristics();
-                        if (machine.buzz) {
-                            result += "buzz";
-                        }
-                        if (machine.duck && !machine.buzz) {
-                            result += "duck";
-                        } else {
-                            result += ", duck";
-                        }
-                        if (machine.palindromic) {
-                            result += ", palindromic";
-                        }
-                        if (machine.gapful) {
-                            result += ", gapful";
-                        }
-                        if (machine.even) {
-                            result += ", even";
-                        } else {
-                            result += ", odd";
-                        }
+                        System.out.println("Properties of " + num);
+                        getCharacteristics();
+                    } else if (machine.exit) {
+                        exit = true;
+                        System.out.println("Goodbye!");
                     } else {
                         notNaturalFirstNumber();
-                        break;
                     }
-                    System.out.println(result);
                 }
-                System.out.println("");
-            } else {
-                machine = new Numbers(num);
-                machine.checkNaturalNum();
-
-                if (machine.natural && !machine.exit) {
-                    checkCharacteristics();
-                    System.out.println("Properties of " + num);
-                    getCharacteristics();
-                } else if (machine.exit) {
-                    exit = true;
-                    System.out.println("Goodbye!");
-                } else {
-                    notNaturalFirstNumber();
-                }
+            } catch (NumberFormatException e) {
+                notNaturalFirstNumber();
             }
         }
     }
