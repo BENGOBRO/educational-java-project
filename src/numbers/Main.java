@@ -22,17 +22,8 @@ public class Main {
                 long number = Long.parseLong(line[0]);
                 long amount = Long.parseLong(line[1]);
                 Menu.getNumber(number, amount);
-            } else if (line.length == 3 && Checks.checkingString(line)) {
-                long number = Long.parseLong(line[0]);
-                long amount = Long.parseLong(line[1]);
-                String property = line[2];
-                Menu.getNumber(number, amount, property);
-            } else if (line.length == 4 && Checks.checkingString(line)) {
-                long number = Long.parseLong(line[0]);
-                long amount = Long.parseLong(line[1]);
-                String property1 = line[2];
-                String property2 = line[3];
-                Menu.getNumber(number, amount, property1, property2);
+            } else if (Checks.checkingString(line)) {
+                Menu.getNumber(line);
             }
         }
     }

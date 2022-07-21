@@ -17,7 +17,8 @@ public class Menu {
         System.out.println("- enter two natural numbers to obtain the properties of the list:");
         System.out.println("  * the first parameter represents a starting number;");
         System.out.println("  * the second parameter shows how many consecutive numbers are to be processed;");
-        System.out.println("- two natural numbers and two properties to search for;");
+        System.out.println("- two natural numbers and properties to search for;");
+        System.out.println("- a property preceded by minus must not be present in numbers;");
         System.out.println("- separate the parameters with one space;");
         System.out.println("- enter 0 to exit.");
         System.out.println("");
@@ -28,16 +29,20 @@ public class Menu {
     }
 
     private static void getCharacteristics(Numbers number) {
-        System.out.println("Properties of " + number.getNumber());
-        System.out.println("buzz: " + number.isBuzz());
-        System.out.println("duck: " + number.isDuck());
-        System.out.println("palindromic: " + number.isPalindromic());
-        System.out.println("gapful: " + number.isGapful());
-        System.out.println("spy: " + number.isSpy());
-        System.out.println("square: " + number.isSquare());
-        System.out.println("sunny: " + number.isSunny());
-        System.out.println("even: " + number.isEven());
-        System.out.println("odd: " + !number.isEven());
+        System.out.printf("Properties of %d \n", number.getNumber());
+        System.out.printf("buzz: %s \n", number.isBuzz());
+        System.out.printf("duck: %s \n", number.isDuck());
+        System.out.printf("palindromic: %s \n", number.isPalindromic());
+        System.out.printf("gapful: %s \n", number.isGapful());
+        System.out.printf("spy: %s \n", number.isSpy());
+        System.out.printf("square: %s \n", number.isSquare());
+        System.out.printf("sunny: %s \n", number.isSunny());
+        System.out.printf("even: %s \n", number.isEven());
+        System.out.printf("odd: %s \n", !number.isEven());
+        System.out.printf("jumping: %s \n", number.isJumping());
+        System.out.printf("happy: %s \n", number.isHappy());
+        System.out.printf("sad: %s \n", !number.isHappy());
+        System.out.println("");
     }
 
     public static void getNumber(long num) {
@@ -76,135 +81,209 @@ public class Menu {
             if (number.isSunny()) {
                 types.add("sunny");
             }
+            if (number.isJumping()) {
+                types.add("jumping");
+            }
+            if (number.isHappy()) {
+                types.add("happy");
+            } else {
+                types.add("sad");
+            }
             result += String.join(", ", types);
             System.out.println(result);
         }
     }
 
-    public static void getNumber(long num, long amount, String property) {
-        Properties userProperty = Properties.valueOf(property.toLowerCase());
-        int i = 0;
-        while (amount > 0) {
-            number = new Numbers(num + i);
-            switch (userProperty) {
-                case buzz:
-                    if (number.isBuzz()) {
-                        amount--;
-                        getNumber(num + i, 1);
-                    }
-                    break;
-                case duck:
-                    if (number.isDuck()) {
-                        amount--;
-                        getNumber(num + i, 1);
-                    }
-                    break;
-                case palindromic:
-                    if (number.isPalindromic()) {
-                        amount--;
-                        getNumber(num + i, 1);
-                    }
-                    break;
-                case gapful:
-                    if (number.isGapful()) {
-                        amount--;
-                        getNumber(num + i, 1);
-                    }
-                    break;
-                case spy:
-                    if (number.isSpy()) {
-                        amount--;
-                        getNumber(num + i, 1);
-                    }
-                    break;
-                case even:
-                    if (number.isEven()) {
-                        amount--;
-                        getNumber(num + i, 1);
-                    }
-                    break;
-                case odd:
-                    if (!number.isEven()) {
-                        amount--;
-                        getNumber(num + i, 1);
-                    }
-                    break;
-                case square:
-                    if (number.isSquare()) {
-                        amount--;
-                        getNumber(num + i, 1);
-                    }
-                    break;
-                case sunny:
-                    if (number.isSunny()) {
-                        amount--;
-                        getNumber(num + i, 1);
-                    }
-                    break;
+    public static void getNumber(String[] line) {
+        long num = Long.parseLong(line[0]);
+        long amount = Long.parseLong(line[1]);
+        List<Properties> allProperties = new ArrayList<>();
+        List<Boolean> isDeletedProperties = new ArrayList<>();
+
+        Properties property;
+        int amountOfDeletedProperties = 0;
+        for (int i = 2; i < line.length; i++) {
+            isDeletedProperties.add(line[i].contains("-"));
+            if (isDeletedProperties.get(i - 2)) {
+                property = Properties.valueOf(line[i].substring(1).toLowerCase());
+                amountOfDeletedProperties++;
+            } else {
+                property = Properties.valueOf(line[i].toLowerCase());
             }
-            i++;
+            allProperties.add(property);
         }
-    }
-
-    public static void getNumber(long num, long amount, String property1, String property2) {
-        Properties userProperty1 = Properties.valueOf(property1.toLowerCase());
-        Properties userProperty2 = Properties.valueOf(property2.toLowerCase());
-        Properties[] userProperties = {userProperty1, userProperty2};
 
         int i = 0;
         while (amount > 0) {
+            boolean exit = false;
             int count = 0;
             number = new Numbers(num + i);
-            for (Properties userProperty: userProperties) {
+            for (int j = 0; j < allProperties.size(); j++) {
+                if (exit) {
+                    break;
+                }
+                Properties userProperty = allProperties.get(j);
+                boolean isDeleted = isDeletedProperties.get(j);
                 switch (userProperty) {
                     case buzz:
                         if (number.isBuzz()) {
-                            count++;
+                            if (!isDeleted) {
+                                count++;
+                            } else {
+                                exit = true;
+                                count = -100;
+                            }
+                        } else if (!isDeleted && !number.isBuzz()) {
+                            exit = true;
+                            count = -100;
                         }
                         break;
                     case duck:
                         if (number.isDuck()) {
-                            count++;
+                            if (!isDeleted) {
+                                count++;
+                            } else {
+                                exit = true;
+                                count = -100;
+                            }
+                        } else if (!isDeleted && !number.isDuck()) {
+                            exit = true;
+                            count = -100;
                         }
                         break;
                     case palindromic:
                         if (number.isPalindromic()) {
-                            count++;
+                            if (!isDeleted) {
+                                count++;
+                            } else {
+                                exit = true;
+                                count = -100;
+                            }
+                        } else if (!isDeleted && !number.isPalindromic()) {
+                            exit = true;
+                            count = -100;
                         }
                         break;
                     case gapful:
                         if (number.isGapful()) {
-                            count++;
+                            if (!isDeleted) {
+                                count++;
+                            } else {
+                                exit = true;
+                                count = -100;
+                            }
+                        } else if (!isDeleted && !number.isGapful()) {
+                            exit = true;
+                            count = -100;
                         }
                         break;
                     case spy:
                         if (number.isSpy()) {
-                            count++;
+                            if (!isDeleted) {
+                                count++;
+                            } else {
+                                exit = true;
+                                count = -100;
+                            }
+                        } else if (!isDeleted && !number.isSpy()){
+                            exit = true;
+                            count = -100;
                         }
                         break;
                     case even:
                         if (number.isEven()) {
-                            count++;
+                            if (!isDeleted) {
+                                count++;
+                            } else {
+                                exit = true;
+                                count = -100;
+                            }
+                        } else if (!isDeleted && !number.isEven()) {
+                            exit = true;
+                            count = -100;
                         }
                         break;
                     case odd:
                         if (!number.isEven()) {
-                            count++;
+                            if (!isDeleted) {
+                                count++;
+                            } else {
+                                exit = true;
+                                count = -100;
+                            }
+                        } else if (!isDeleted && number.isEven()){
+                            exit = true;
+                            count = -100;
                         }
                         break;
                     case square:
                         if (number.isSquare()) {
-                            count++;
+                            if (!isDeleted) {
+                                count++;
+                            } else {
+                                exit = true;
+                                count = -100;
+                            }
+                        } else if (!isDeleted && !number.isSquare()) {
+                            exit = true;
+                            count = -100;
                         }
                         break;
                     case sunny:
                         if (number.isSunny()) {
-                            count++;
+                            if (!isDeleted) {
+                                count++;
+                            } else {
+                                exit = true;
+                                count = -100;
+                            }
+                        } else if (!isDeleted && !number.isSunny()) {
+                            exit = true;
+                            count = -100;
+                        }
+                        break;
+                    case jumping:
+                        if (number.isJumping()) {
+                            if (!isDeleted) {
+                                count++;
+                            } else {
+                                exit = true;
+                                count = -100;
+                            }
+                        } else if (!isDeleted && !number.isJumping()) {
+                            exit = true;
+                            count = -100;
+                        }
+                        break;
+                    case happy:
+                        if (number.isHappy()) {
+                            if (!isDeleted) {
+                                count++;
+                            } else {
+                                exit = true;
+                                count = -100;
+                            }
+                        } else if (!isDeleted && !number.isHappy()) {
+                            exit = true;
+                            count = -100;
+                        }
+                        break;
+                    case sad:
+                        if (!number.isHappy()) {
+                            if (!isDeleted) {
+                                count++;
+                            } else {
+                                exit = true;
+                                count = -100;
+                            }
+                        } else if (!isDeleted && number.isHappy()) {
+                            exit = true;
+                            count = -100;
                         }
                         break;
                 }
             }
-            if (count == 2) {
+            if (count == allProperties.size() - amountOfDeletedProperties) {
                 amount--;
                 getNumber(num + i, 1);
             }
