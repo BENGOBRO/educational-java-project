@@ -1,5 +1,7 @@
 package numbers;
 
+import java.util.ArrayList;
+
 public class Numbers {
     private final long num;
     private final long TEN_DIVISOR = 10;
@@ -11,6 +13,8 @@ public class Numbers {
     private final boolean spy;
     private final boolean sunny;
     private final boolean square;
+    private final boolean jumping;
+    private final boolean happy;
 
     public Numbers(long num) {
         this.num = num;
@@ -22,10 +26,8 @@ public class Numbers {
         spy = isSpy(num);
         sunny = isSunny(num);
         square = isSquare(num);
-    }
-
-    public long getNumber() {
-        return num;
+        jumping = isJumping(num);
+        happy = isHappy(num);
     }
 
     private boolean isEven(long num) {
@@ -88,31 +90,52 @@ public class Numbers {
         return isSquare(num + 1);
     }
 
-    public boolean isEven() {
-        return even;
+    private boolean isJumping(long num) {
+        long localNum = num;
+        long previousDigit = 0;
+        boolean firstStep = true;
+        while (localNum > 0) {
+            if (!firstStep && Math.abs(localNum % 10 - previousDigit) == 1) {
+                previousDigit = localNum % 10;
+                localNum /= 10;
+            } else if (firstStep) {
+                previousDigit = localNum % 10;
+                localNum /= 10;
+                firstStep = false;
+            } else {
+                return false;
+            }
+        }
+        return true;
     }
 
-    public boolean isBuzz() {
-        return buzz;
+    private boolean isHappy(long num) {
+        long localNum = num;
+        long digitSum = 0;
+        while (localNum > 0) {
+            long digit = localNum % 10;
+            digitSum += digit * digit;
+            localNum /= 10;
+        }
+        if (digitSum == 1) {
+            return true;
+        } else if (digitSum == getNumber() || digitSum == 4) {
+            return false;
+        } else {
+            return isHappy(digitSum);
+        }
     }
 
-    public boolean isDuck() {
-        return duck;
-    }
-
-    public boolean isGapful() {
-        return gapful;
-    }
-
-    public boolean isPalindromic() {
-        return palindromic;
-    }
-
-    public boolean isSpy() {
-        return spy;
-    }
-
-    public boolean isSquare() { return square;}
-    public boolean isSunny() { return sunny;}
+    public long getNumber() {return num;}
+    public boolean isEven() {return even;}
+    public boolean isBuzz() {return buzz;}
+    public boolean isDuck() {return duck;}
+    public boolean isGapful() {return gapful;}
+    public boolean isPalindromic() {return palindromic;}
+    public boolean isSpy() {return spy;}
+    public boolean isSquare() {return square;}
+    public boolean isSunny() {return sunny;}
+    public boolean isJumping() {return  jumping;}
+    public boolean isHappy() {return happy;}
 
 }
